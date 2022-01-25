@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 17.3.1
+      uses: actions/setup-node@v1
+      with:
+        node-version: '17.3.1'
+    - name: Install yarn and run unittest
+      run: |
+        yarn
+        yarn test
+      env:
+        CI: true
+    - name: Publish to Github Packages Registry
+      uses: kf6999/iste501@master
+      with:
+        name: kf6999/iste501
+        registry: docker.pkg.github.com
+        username: ${{ secrets.GITHUB_USERNAME }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        dockerfile: Dockerfile-prod
+        tags: latest
